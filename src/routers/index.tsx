@@ -1,12 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
 import MainPage from '../pages/MainPage';
-import ServicesPage from '../pages/ServicesPage'
+import ServiceCategories from '../pages/ServiceCategories';
+import CartPage from '../pages/Card';
 
 const RoutesConfig = () => {
   return (
     <Routes>
       <Route path="/" element={<MainPage />} />
-      <Route path="/service_categories" element={<ServicesPage />} />
+      <Route path="/services" element={<ServiceCategories />} />
+      <Route path="/cart" element={<CartPage />} />
     </Routes>
   );
 };
