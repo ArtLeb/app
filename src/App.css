@@ -3,19 +3,3 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-/* Адаптивная сетка */
-@media (max-width: 600px) {
-  .MuiGrid-item {
-    width: 100% !important;
-  }
-}
-
-/* Анимации */
-.category-card {
-  transition: transform 0.3s ease;
-}
-
-.category-card:hover {
-  transform: translateY(-5px);
-}
