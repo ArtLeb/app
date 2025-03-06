@@ -2,15 +2,16 @@
 import { useState, useEffect } from 'react';
 import { 
   Dialog, 
-  DialogTitle, 
-  DialogContent, 
   DialogActions, 
-  Button, 
-  Box, 
-  Typography, 
+  Button,
+  DialogContent,
+  Box,
+  Typography,
   CircularProgress 
 } from '@mui/material';
 import useRequest from '../helpers/useRequest';
+import DatePickerDialog from './DatePickerDialog';
+import TimePickerDialog from './TimePickerDialog';
 
 interface PersonRange {
   range_id: number;
@@ -25,8 +26,15 @@ interface Props {
   categoryId: number;
 }
 
+const TIME_SELECT_CATEGORIES = [5, 6, 7];
+
 export default function PersonRangeDialog({ open, onClose, categoryId }: Props) {
   const [selectedRange, setSelectedRange] = useState<number | null>(null);
+  const [dateDialogOpen, setDateDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [timeDialogOpen, setTimeDialogOpen] = useState(false);
+  const [selectedTime, setSelectedTime] = useState<{ start: string; end: string } | null>(null);
+  
   const { responseData: ranges, error, loading } = useRequest<PersonRange[]>({
     method: 'GET',
     url: `/person-ranges?category_id=${categoryId}`
@@ -34,152 +42,145 @@ export default function PersonRangeDialog({ open, onClose, categoryId }: Props) 
 
   useEffect(() => {
     setSelectedRange(null);
+    setSelectedDate(null);
+    setSelectedTime(null);
   }, [categoryId]);
 
   const handleSelectDate = () => {
+    setDateDialogOpen(true);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    
+    if (TIME_SELECT_CATEGORIES.includes(categoryId)) {
+      setTimeDialogOpen(true);
+    } else {
+      handleBooking();
+    }
+  };
+
+  const handleTimeConfirm = (start: string, end: string) => {
+    setSelectedTime({ start, end });
+    handleBooking();
+  };
+
+  const handleBooking = () => {
+    console.log('Бронирование:', {
+      categoryId,
+      persons: selectedRange,
+      date: selectedDate,
+      time: TIME_SELECT_CATEGORIES.includes(categoryId) ? selectedTime : null
+    });
     onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs" PaperProps={{ sx: { borderRadius: 3 } }}>
-      <DialogTitle sx={{ 
-        textAlign: 'center', 
-        fontWeight: 700,
-        fontSize: 20,
-        color: '#707070',
-        letterSpacing: '0.06em',
-        pt: 4,
-        pb: 2
-      }}>
-        Выберите вместительность
-      </DialogTitle>
-      
-      <DialogContent>
-        {loading ? (
-          <Box textAlign="center" py={4}>
-            <CircularProgress />
-          </Box>
-        ) : error ? (
-          <Typography color="error" textAlign="center">
-            Ошибка загрузки данных
-          </Typography>
-        ) : (
-          <Box sx={{ 
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 4,
-            py: 3
-          }}>
-            {ranges?.map((range) => (
-              <Box
-                key={range.range_id}
-                onClick={() => setSelectedRange(range.range_id)}
-                sx={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 1
-                }}
-              >
-                <Box sx={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 2,
-                  border: '1px solid #707070',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: selectedRange === range.range_id ? '#334e77' : '#fff',
-                  transition: '0.3s'
-                }}>
-                  <Typography variant="h6" sx={{ 
-                    color: selectedRange === range.range_id ? '#fff' : '#3d444a',
-                    fontWeight: 700,
-                    fontSize: 14
-                  }}>
-                    {range.max_persons}
-                  </Typography>
-                  <Typography sx={{ 
-                    color: selectedRange === range.range_id ? '#fff' : '#3d444a',
-                    fontWeight: 700,
-                    fontSize: 14,
-                    mt: 0.5
-                  }}>
-                    ЧЕЛ
-                  </Typography>
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        )}
-
-        <Box sx={{ 
-          textAlign: 'center', 
-          mt: 3,
-          mb: 2,
-          px: 2,
-          py: 1,
-          backgroundColor: '#f5f5f5',
-          borderRadius: 2
-        }}>
-          <Typography variant="h6" sx={{ 
-            color: '#464242',
-            fontWeight: 700,
-            fontSize: 14,
-            letterSpacing: '0.06em'
-          }}>
-            6 ЧАСОВ 1500 РУБ
-          </Typography>
-        </Box>
-      </DialogContent>
-
-      <DialogActions sx={{ 
-        justifyContent: 'space-between', 
-        p: 3,
-        pt: 0 
-      }}>
-        <Button 
-          onClick={onClose}
-          sx={{ 
-            color: '#464242',
-            fontWeight: 600,
-            fontSize: 14,
-            letterSpacing: '0.06em',
-            width: 150,
-            height: 30,
-            borderRadius: 3,
-            border: '1px solid #707070'
-          }}
-        >
-          Отменить
-        </Button>
-        <Button 
-  variant="contained" 
-  onClick={handleSelectDate}
-  disabled={!selectedRange || loading}
-  sx={{ 
-    backgroundColor: '#334e77',
-    color: '#f3e7e7',
-    fontWeight: 600,
-    fontSize: 14,
-    letterSpacing: '0.06em',
-    width: 160, // Увеличено с 118px
-    height: 30,
-    borderRadius: 3,
-    '&:hover': { 
-      backgroundColor: '#2a4060',
-      boxShadow: 'none'
-    },
-    '&:disabled': {
-      backgroundColor: '#e0e0e0'
-    }
+    <>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs" PaperProps={{ sx: { borderRadius: 3 } }}>
+        <DialogContent>
+          {loading ? (
+            <Box textAlign="center" py={4}>
+              <CircularProgress />
+            </Box>
+          ) : error ? (
+            <Typography color="error" textAlign="center">
+             
+            </Typography>
+          ) : (
+            <Box sx={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 4,
+              py: 3
+            }}>
+              {ranges?.map((range) => (
+  <Box
+  key={range.range_id}
+  onClick={() => setSelectedRange(range.range_id)}
+  sx={{
+    cursor: 'pointer',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 1,
+    border: selectedRange === range.range_id ? '2px solid #334e77' : '1px solid #ddd',
+    borderRadius: 2,
+    padding: 2,
+    minWidth: 100
   }}
 >
-  Выбрать дату
-</Button>
-      </DialogActions>
-    </Dialog>
+  <Typography variant="h6" sx={{ color: '#334e77', fontWeight: 700 }}>
+    {range.max_persons}
+  </Typography>
+  <Typography variant="body2" sx={{ color: '#666', textAlign: 'center' }}>
+    чел
+  </Typography>
+</Box>
+              ))}
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ 
+          justifyContent: 'space-between', 
+          p: 3,
+          pt: 0 
+        }}>
+          <Button 
+            onClick={onClose}
+            sx={{ 
+              color: '#464242',
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: '0.06em',
+              width: 114,
+              height: 28,
+              borderRadius: 3,
+              border: '1px solid #707070'
+            }}
+          >
+            Отменить
+          </Button>
+          <Button 
+            variant="contained" 
+            onClick={handleSelectDate}
+            disabled={!selectedRange || loading}
+            sx={{ 
+              backgroundColor: '#334e77',
+              color: '#f3e7e7',
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: '0.06em',
+              width: 140,
+              height: 28,
+              borderRadius: 3,
+              '&:hover': { 
+                backgroundColor: '#2a4060',
+                boxShadow: 'none'
+              },
+              '&:disabled': {
+                backgroundColor: '#e0e0e0'
+              }
+            }}
+          >
+            Выбрать дату
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <DatePickerDialog 
+        open={dateDialogOpen}
+        onClose={() => setDateDialogOpen(false)}
+        onDateSelect={handleDateSelect}
+        onConfirm={handleBooking}
+      />
+
+      <TimePickerDialog
+        open={timeDialogOpen}
+        onClose={() => setTimeDialogOpen(false)}
+        onConfirm={handleTimeConfirm}
+      />
+    </>
   );
 }

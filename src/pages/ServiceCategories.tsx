@@ -67,7 +67,6 @@ export default function ServiceCategories() {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Фиксированный верхний баннер */}
       <Box sx={{
         height: 80,
         backgroundImage: 'url(src/assets/img/Top.png)',
@@ -92,7 +91,6 @@ export default function ServiceCategories() {
         </Typography>
       </Box>
 
-      {/* Основной контент */}
       <Box sx={{
         pt: '80px',
         pb: '64px',
@@ -121,12 +119,10 @@ export default function ServiceCategories() {
               }}
             >
               <Link 
-                to={`/services/${category.id}`} 
+                to="#" 
                 onClick={(e) => {
-                  if (category.id === 1) {
-                    e.preventDefault();
-                    setSelectedCategory(category.id);
-                  }
+                  e.preventDefault();
+                  setSelectedCategory(category.id);
                 }}
                 style={{ 
                   textDecoration: 'none',
@@ -166,14 +162,12 @@ export default function ServiceCategories() {
         </Grid>
       </Box>
 
-      {/* Диалог выбора количества персон */}
       <PersonRangeDialog 
-        open={selectedCategory === 1}
+        open={selectedCategory !== null}
         onClose={() => setSelectedCategory(null)}
         categoryId={selectedCategory || 0}
       />
 
-      {/* Фиксированное нижнее меню */}
       <Box sx={{
         position: 'fixed',
         bottom: 0,

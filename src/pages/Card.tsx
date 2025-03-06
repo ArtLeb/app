@@ -6,7 +6,7 @@ const ContentWrapper = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '150px 16px',
+  padding: '200px 16px',
   maxWidth: 430,
   margin: '0 auto',
   minHeight: 'calc(100vh - 144px)' // Фиксированная высота
@@ -17,15 +17,15 @@ const ReservationCard = styled(Box)({
   background: '#fff',
   borderRadius: '8px',
   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-  padding: '16px 16px 16px 104px', 
+  padding: '16px 16px 16px 104px', // Увеличиваем левый отступ
   marginBottom: 24,
   position: 'relative',
   minHeight: 112
 });
 
 const ReservationImage = styled('img')({
-  width: 50,
-  height: 50,
+  width: 80,
+  height: 80,
   position: 'absolute',
   left: 16,
   top: '50%',
@@ -85,7 +85,7 @@ export default function CartPage() {
         <ReservationCard>
           <ReservationImage 
             src="src/assets/img/record.png" 
-             
+            alt="Record" 
           />
           
           <Box>
@@ -136,7 +136,7 @@ export default function CartPage() {
         </ReservationCard>
 
         <ReservationButton>
-          ЗАНЯТЬ СТОЛ
+          ПОДТВЕРДИТЬ БРОНЬ
         </ReservationButton>
       </ContentWrapper>
 
