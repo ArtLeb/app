@@ -2,6 +2,8 @@ declare global {
     interface Window {
       Telegram: {
         WebApp: {
+          setHeaderColor(arg0: string): unknown;
+          setBackgroundColor(arg0: string): unknown;
           initData: string;
           initDataUnsafe: {
             query_id?: string;

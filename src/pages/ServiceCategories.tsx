@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Grid, Typography, CircularProgress, styled } from '@mui/material';
 import { BottomMenu } from '../components/MainPageComponents/BottomMenu';
-import useRequest from '../helpers/useRequest';
+import useRequest from '../helpers/Request';
 import PersonRangeDialog from '../components/PersonRangeDialog';
 
 interface ServiceCategory {
@@ -166,6 +166,7 @@ export default function ServiceCategories() {
         open={selectedCategory !== null}
         onClose={() => setSelectedCategory(null)}
         categoryId={selectedCategory || 0}
+        categoryName={categories?.find(c => c.id === selectedCategory)?.name || ''}
       />
 
       <Box sx={{

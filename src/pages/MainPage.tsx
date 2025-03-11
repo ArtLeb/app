@@ -1,6 +1,6 @@
 import {BottomMenu} from '../components/MainPageComponents/BottomMenu'
 import {MainTop} from '../components/MainPageComponents/MainTop'
-import Request from '../helpers/useRequest'
+import Request from '../helpers/Request'
 
 interface ApiResponse {
   success: boolean;

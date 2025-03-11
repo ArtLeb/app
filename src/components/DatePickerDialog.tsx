@@ -14,7 +14,7 @@ import {
   IconButton
 } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import useRequest from '../helpers/useRequest';
+import useRequest from '../helpers/Request';
 
 interface BookingDate {
   start: string;
@@ -69,7 +69,7 @@ export default function DatePickerDialog({ open, onClose, onDateSelect, onConfir
           <ChevronLeft />
         </IconButton>
         
-        <Typography variant="h6">
+        <Typography variant="h6" component="div">
           {format(currentMonth, 'LLLL yyyy', { locale: ru })}
         </Typography>
         
@@ -86,8 +86,8 @@ export default function DatePickerDialog({ open, onClose, onDateSelect, onConfir
           textAlign: 'center',
           mb: 2
         }}>
-          {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(day => (
-            <Typography key={day} variant="body2" color="#707070">
+          {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
+            <Typography key={`weekday-${index}`} variant="body2" color="#707070">
               {day}
             </Typography>
           ))}
