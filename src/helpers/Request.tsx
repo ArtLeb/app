@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useTelegramInitData from "./useTelegramInitData";
 
 type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -8,32 +9,35 @@ interface UseApiRequestProps {
   data?: any;
 }
 
-export default function useRequest<T>({ method, url, data }: UseApiRequestProps) {
+export default function Request<T>({ method, url, data }: UseApiRequestProps) {
   const [responseData, setResponseData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const initData = useTelegramInitData();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!initData || !url) return;
+
       setLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(`http://localhost:8000${url}`, {
+        const headers = new Headers({
+          "Content-Type": "application/json",
+          "X-Telegram-User": initData.userId,
+          "X-Telegram-Bot-Token": initData.botToken,
+          "X-Telegram-Chat-ID": initData.userId
+        });
+
+        const response = await fetch(`https://abramian-it.ru/bereg-api${url}`, {
           method,
-          headers: {
-            "Content-Type": "application/json",
-            "X-Telegram-User": window.Telegram?.WebApp?.initData || "",
-          },
+          headers,
           body: method !== "GET" ? JSON.stringify(data) : undefined,
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        setResponseData(result);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        setResponseData(await response.json());
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
@@ -41,8 +45,8 @@ export default function useRequest<T>({ method, url, data }: UseApiRequestProps)
       }
     };
 
-    if (url) fetchData();
-  }, [method, url, data]);
+    fetchData();
+  }, [method, url, data, initData]);
 
   return { responseData, error, loading };
 }

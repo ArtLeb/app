@@ -10,7 +10,7 @@ interface ApiResponse {
 function MainPage() {
   const { responseData, error } = Request<ApiResponse>({
     method: "GET",
-    baseUrl: "/me",
+    url: "/me",
   });
   console.log(error);
   return (

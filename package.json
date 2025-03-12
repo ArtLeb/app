@@ -17,6 +17,7 @@
     "@mui/material": "^6.4.7",
     "@mui/x-date-pickers": "^7.27.1",
     "@telegram-apps/sdk-react": "^3.0.7",
+    "@twa-dev/sdk": "^8.0.2",
     "axios": "^1.8.2",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
